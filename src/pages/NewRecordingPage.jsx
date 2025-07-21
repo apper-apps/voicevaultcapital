@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "@/contexts/AuthContext";
+import { useApiKeys } from "@/hooks/useApiKeys";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
@@ -10,6 +12,8 @@ import { recordingsService } from "@/services/api/recordingsService";
 
 const NewRecordingPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { hasKeys } = useApiKeys();
   const [recording, setRecording] = useState(null);
   const [metadata, setMetadata] = useState({
     title: "",
@@ -18,7 +22,6 @@ const NewRecordingPage = () => {
     department: ""
   });
   const [saving, setSaving] = useState(false);
-
   const handleRecordingComplete = (recordingData) => {
     setRecording(recordingData);
     toast.success("Recording completed successfully!");
@@ -97,13 +100,35 @@ const NewRecordingPage = () => {
         />
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">New Recording</h1>
-          <p className="text-white/70">Record and analyze your meeting with AI-powered insights</p>
+<p className="text-white/70">Record and analyze your meeting with AI-powered insights</p>
         </div>
       </div>
 
+      {/* API Keys Warning */}
+      {!hasKeys() && (
+        <Card>
+          <div className="flex items-start gap-3">
+            <ApperIcon name="AlertTriangle" size={20} className="text-warning flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-white mb-2">API Configuration Required</h3>
+              <p className="text-white/70 mb-4">
+                To enable AI-powered transcription and analysis, please configure your API keys in Settings.
+              </p>
+              <Button
+                onClick={() => navigate('/settings')}
+                variant="secondary"
+                size="sm"
+                icon="Settings"
+              >
+                Configure API Keys
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* Recording Controls */}
       <RecordingControls onRecordingComplete={handleRecordingComplete} />
-
       {/* Recording Metadata Form */}
       {recording && (
         <Card>
