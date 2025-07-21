@@ -1,0 +1,60 @@
+[
+  {
+    "id": "transcript_1",
+    "recordingId": "1",
+    "segments": [
+      {
+        "speaker": "Speaker 1",
+        "text": "Good morning everyone, thank you for joining our Q4 strategy planning session. Let's start by reviewing our current position and discussing our goals for the next quarter.",
+        "startTime": 0,
+        "endTime": 12
+      },
+      {
+        "speaker": "Speaker 2",
+        "text": "Thanks Sarah. I've prepared a comprehensive analysis of our market position. We're seeing strong growth in the enterprise segment, but we need to address some challenges in customer retention.",
+        "startTime": 13,
+        "endTime": 28
+      },
+      {
+        "speaker": "Speaker 3",
+        "text": "That aligns with what I'm seeing from the product side. We have three major initiatives that could significantly impact our Q4 performance. Let me walk through each one.",
+        "startTime": 29,
+        "endTime": 42
+      },
+      {
+        "speaker": "Speaker 1",
+        "text": "Excellent. Before we dive deep, I want to ensure we allocate sufficient time to discuss the budget implications of each initiative. Financial planning will be crucial for Q4 success.",
+        "startTime": 43,
+        "endTime": 58
+      }
+    ],
+    "language": "en",
+    "confidence": 0.94
+  },
+  {
+    "id": "transcript_2",
+    "recordingId": "2",
+    "segments": [
+      {
+        "speaker": "Speaker 1",
+        "text": "Let's begin the technical architecture review. Our main focus today is scalability and performance optimization. We need to address the bottlenecks we've identified in the current system.",
+        "startTime": 0,
+        "endTime": 15
+      },
+      {
+        "speaker": "Speaker 2",
+        "text": "I've completed the performance analysis. The database queries are the primary bottleneck, especially during peak usage hours. We need to implement caching and optimize our indexing strategy.",
+        "startTime": 16,
+        "endTime": 32
+      },
+      {
+        "speaker": "Speaker 3",
+        "text": "From an infrastructure perspective, we should consider migrating to a microservices architecture. This would give us better scalability and fault tolerance.",
+        "startTime": 33,
+        "endTime": 46
+      }
+    ],
+    "language": "en",
+    "confidence": 0.91
+  }
+]

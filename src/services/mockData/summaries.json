@@ -1,0 +1,113 @@
+[
+  {
+    "id": "summary_1",
+    "recordingId": "1",
+    "meetingType": "strategic",
+    "topic": "Q4 Strategy Planning and Goal Setting",
+    "decisions": [
+      "Focus on enterprise segment growth with dedicated account management",
+      "Implement customer retention program with personalized outreach",
+      "Allocate 30% of Q4 budget to product development initiatives"
+    ],
+    "actionItems": [
+      {
+        "id": "action_1",
+        "task": "Prepare detailed enterprise growth strategy proposal",
+        "assignee": "Sarah Johnson",
+        "deadline": "2024-01-22T17:00:00Z",
+        "status": "pending",
+        "recordingId": "1"
+      },
+      {
+        "id": "action_2",
+        "task": "Design customer retention program framework",
+        "assignee": "Michael Chen",
+        "deadline": "2024-01-25T17:00:00Z",
+        "status": "in-progress",
+        "recordingId": "1"
+      }
+    ],
+    "risks": [
+      "Market competition intensifying in Q4 holiday season",
+      "Resource allocation conflicts between growth and retention initiatives",
+      "Potential budget overruns if initiatives exceed projections"
+    ],
+    "keyInsights": [
+      "Enterprise customers show 40% higher lifetime value than SMB segment",
+      "Customer churn rate increases by 15% during Q4 due to budget cycles",
+      "Product development velocity directly correlates with market share growth"
+    ],
+    "importance": 9
+  },
+  {
+    "id": "summary_2",
+    "recordingId": "2",
+    "meetingType": "technical",
+    "topic": "System Architecture Scalability Review",
+    "decisions": [
+      "Migrate to microservices architecture within 6 months",
+      "Implement Redis caching layer for database optimization",
+      "Establish performance monitoring dashboard for real-time insights"
+    ],
+    "actionItems": [
+      {
+        "id": "action_3",
+        "task": "Create microservices migration roadmap and timeline",
+        "assignee": "David Kim",
+        "deadline": "2024-01-30T17:00:00Z",
+        "status": "pending",
+        "recordingId": "2"
+      },
+      {
+        "id": "action_4",
+        "task": "Set up Redis caching infrastructure in staging environment",
+        "assignee": "Lisa Wang",
+        "deadline": "2024-01-28T17:00:00Z",
+        "status": "pending",
+        "recordingId": "2"
+      }
+    ],
+    "risks": [
+      "Migration complexity may impact development velocity",
+      "Potential service dependencies creating cascade failures",
+      "Learning curve for team transitioning to microservices"
+    ],
+    "keyInsights": [
+      "Database bottlenecks occur predictably during peak usage (2-4 PM)",
+      "Monolithic architecture limits horizontal scaling capabilities",
+      "Caching implementation could improve response times by 60%"
+    ],
+    "importance": 8
+  },
+  {
+    "id": "summary_3",
+    "recordingId": "3",
+    "meetingType": "review",
+    "topic": "Customer Feedback Analysis and Product Improvements",
+    "decisions": [
+      "Prioritize user interface improvements based on feedback trends",
+      "Implement customer satisfaction tracking system",
+      "Schedule quarterly customer advisory board meetings"
+    ],
+    "actionItems": [
+      {
+        "id": "action_5",
+        "task": "Compile top 10 UI improvement requests from customer feedback",
+        "assignee": "Emma Thompson",
+        "deadline": "2024-01-26T17:00:00Z",
+        "status": "completed",
+        "recordingId": "3"
+      }
+    ],
+    "risks": [
+      "Resource constraints may delay implementation of customer requests",
+      "Conflicting feedback from different customer segments"
+    ],
+    "keyInsights": [
+      "85% of feedback relates to user experience improvements",
+      "Enterprise customers request more advanced reporting features",
+      "Mobile app usage increased 120% in past quarter"
+    ],
+    "importance": 7
+  }
+]

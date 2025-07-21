@@ -1,0 +1,62 @@
+[
+  {
+    "Id": 1,
+    "title": "Q4 Strategy Planning Session",
+    "audioUrl": "/audio/strategy-planning.mp3",
+    "duration": 2847,
+    "createdAt": "2024-01-15T10:30:00Z",
+    "participants": ["Sarah Johnson", "Michael Chen", "Alex Rivera"],
+    "tags": ["strategy", "Q4", "planning", "roadmap"],
+    "department": "Executive",
+    "transcriptId": "transcript_1",
+    "summaryId": "summary_1"
+  },
+  {
+    "Id": 2,
+    "title": "Technical Architecture Review",
+    "audioUrl": "/audio/tech-review.mp3",
+    "duration": 1923,
+    "createdAt": "2024-01-14T14:15:00Z",
+    "participants": ["David Kim", "Lisa Wang", "Tom Bradley"],
+    "tags": ["technical", "architecture", "review", "scalability"],
+    "department": "Engineering",
+    "transcriptId": "transcript_2",
+    "summaryId": "summary_2"
+  },
+  {
+    "Id": 3,
+    "title": "Customer Feedback Analysis",
+    "audioUrl": "/audio/customer-feedback.mp3",
+    "duration": 1456,
+    "createdAt": "2024-01-13T09:45:00Z",
+    "participants": ["Emma Thompson", "Carlos Mendez"],
+    "tags": ["customer", "feedback", "analysis", "improvement"],
+    "department": "Product",
+    "transcriptId": "transcript_3",
+    "summaryId": "summary_3"
+  },
+  {
+    "Id": 4,
+    "title": "Marketing Campaign Kickoff",
+    "audioUrl": "/audio/marketing-kickoff.mp3",
+    "duration": 2156,
+    "createdAt": "2024-01-12T16:20:00Z",
+    "participants": ["Jennifer Lee", "Robert Smith", "Maria Garcia", "John Park"],
+    "tags": ["marketing", "campaign", "launch", "creative"],
+    "department": "Marketing",
+    "transcriptId": "transcript_4",
+    "summaryId": "summary_4"
+  },
+  {
+    "Id": 5,
+    "title": "Budget Review Meeting",
+    "audioUrl": "/audio/budget-review.mp3",
+    "duration": 1834,
+    "createdAt": "2024-01-11T11:00:00Z",
+    "participants": ["Patricia Williams", "James Anderson"],
+    "tags": ["budget", "finance", "review", "planning"],
+    "department": "Finance",
+    "transcriptId": "transcript_5",
+    "summaryId": "summary_5"
+  }
+]
