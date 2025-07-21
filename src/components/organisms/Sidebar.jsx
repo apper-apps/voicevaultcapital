@@ -183,12 +183,12 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="text-xs text-white/40">
               Powered by OpenAI & ElevenLabs
             </div>
-          </div>
+</div>
         </div>
       </div>
+    </>
   );
-
-return (
+  return (
     <>
       <DesktopSidebar />
       <MobileSidebar />
