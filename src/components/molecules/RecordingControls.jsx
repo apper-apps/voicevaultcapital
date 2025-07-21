@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import ApperIcon from "@/components/ApperIcon";
+import Error from "@/components/ui/Error";
 import Button from "@/components/atoms/Button";
 import { cn } from "@/utils/cn";
 
 const RecordingControls = ({ 
   onRecordingComplete, 
+  onError,
   maxDuration = 5400, 
   nightMode = false,
   minimized = false 
@@ -39,8 +41,25 @@ const RecordingControls = ({
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const startRecording = async () => {
+const startRecording = async () => {
     try {
+      // Check if browser supports getUserMedia
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("UNSUPPORTED_BROWSER");
+      }
+
+      // Check permission status first if available
+      if (navigator.permissions) {
+        try {
+          const permissionResult = await navigator.permissions.query({ name: 'microphone' });
+          if (permissionResult.state === 'denied') {
+            throw new Error("PERMISSION_DENIED");
+          }
+        } catch (permError) {
+          // Permission API not available in all browsers, continue with getUserMedia
+        }
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: { 
           echoCancellation: true,
@@ -84,6 +103,40 @@ const RecordingControls = ({
       
     } catch (error) {
       console.error("Error starting recording:", error);
+      
+      let errorMessage = "Failed to start recording. Please try again.";
+      let errorDetails = "";
+      
+      if (error.name === 'NotAllowedError' || error.message === 'PERMISSION_DENIED') {
+        errorMessage = "Microphone access denied";
+        errorDetails = "To enable recording:\n\n" +
+          "1. Click the microphone icon in your browser's address bar\n" +
+          "2. Select 'Always allow' for microphone access\n" +
+          "3. Refresh the page and try again\n\n" +
+          "Or check your browser settings to enable microphone permissions for this site.";
+      } else if (error.name === 'NotFoundError') {
+        errorMessage = "No microphone detected";
+        errorDetails = "Please connect a microphone and try again.";
+      } else if (error.name === 'NotReadableError') {
+        errorMessage = "Microphone is already in use";
+        errorDetails = "Please close other applications using the microphone and try again.";
+      } else if (error.name === 'AbortError') {
+        errorMessage = "Recording was interrupted";
+        errorDetails = "Please try starting the recording again.";
+      } else if (error.name === 'SecurityError') {
+        errorMessage = "Security error";
+        errorDetails = "Recording is only available on secure connections (HTTPS).";
+      } else if (error.message === 'UNSUPPORTED_BROWSER') {
+        errorMessage = "Browser not supported";
+        errorDetails = "Please use a modern browser like Chrome, Firefox, Safari, or Edge.";
+      }
+      
+      // Call onError prop if provided, otherwise show console error
+      if (onError) {
+        onError({ message: errorMessage, details: errorDetails });
+      } else {
+        alert(errorMessage + (errorDetails ? '\n\n' + errorDetails : ''));
+      }
     }
   };
 

@@ -13,8 +13,9 @@ import { recordingsService } from "@/services/api/recordingsService";
 const NewRecordingPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { hasKeys } = useApiKeys();
+const { hasKeys } = useApiKeys();
   const [recording, setRecording] = useState(null);
+  const [recordingError, setRecordingError] = useState(null);
   const [metadata, setMetadata] = useState({
     title: "",
     participants: "",
@@ -22,9 +23,16 @@ const NewRecordingPage = () => {
     department: ""
   });
   const [saving, setSaving] = useState(false);
+  
   const handleRecordingComplete = (recordingData) => {
     setRecording(recordingData);
+    setRecordingError(null); // Clear any previous errors
     toast.success("Recording completed successfully!");
+  };
+
+  const handleRecordingError = (error) => {
+    setRecordingError(error);
+    toast.error(error.message);
   };
 
   const handleSave = async () => {
@@ -127,8 +135,36 @@ const NewRecordingPage = () => {
         </Card>
       )}
 
+{/* Recording Error Display */}
+      {recordingError && (
+        <Card>
+          <div className="flex items-start gap-3">
+            <ApperIcon name="AlertCircle" size={20} className="text-error flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-error mb-2">{recordingError.message}</h3>
+              {recordingError.details && (
+                <div className="text-white/70 text-sm whitespace-pre-line mb-4">
+                  {recordingError.details}
+                </div>
+              )}
+              <Button
+                onClick={() => setRecordingError(null)}
+                variant="secondary"
+                size="sm"
+              >
+                Dismiss
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* Recording Controls */}
-      <RecordingControls onRecordingComplete={handleRecordingComplete} />
+      <RecordingControls 
+        onRecordingComplete={handleRecordingComplete} 
+        onError={handleRecordingError}
+      />
+      
       {/* Recording Metadata Form */}
       {recording && (
         <Card>
