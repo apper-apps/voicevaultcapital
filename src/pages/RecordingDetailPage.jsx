@@ -165,10 +165,10 @@ const RecordingDetailPage = () => {
         </div>
       </Card>
 
-      {/* Audio Player */}
+{/* Audio Player */}
       <AudioPlayer
-        audioUrl={recording.audioUrl}
-        duration={recording.duration}
+        audioUrl={recording?.audioUrl}
+        duration={recording?.duration || 0}
         onTimeUpdate={setCurrentTime}
       />
 
