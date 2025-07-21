@@ -48,6 +48,41 @@ class RecordingsService {
     }
     const deleted = this.data.splice(index, 1)[0];
     return { ...deleted };
+}
+
+  async createNightRecording(recordingData) {
+    await this.delay(300);
+    const nightRecording = {
+      ...recordingData,
+      Id: Math.max(...this.data.map(item => item.Id)) + 1,
+      type: "night_recording",
+      createdAt: new Date().toISOString(),
+      isNightMode: true,
+      quality: "background"
+    };
+    this.data.push(nightRecording);
+    return { ...nightRecording };
+  }
+
+  async getNightRecordings() {
+    await this.delay(200);
+    return this.data
+      .filter(recording => recording.type === "night_recording" || recording.isNightMode)
+      .map(recording => ({ ...recording }));
+  }
+
+  async updateNightRecordingDuration(id, duration) {
+    await this.delay(100);
+    const index = this.data.findIndex(item => item.Id === parseInt(id));
+    if (index !== -1) {
+      this.data[index] = { 
+        ...this.data[index], 
+        duration,
+        updatedAt: new Date().toISOString()
+      };
+      return { ...this.data[index] };
+    }
+    throw new Error(`Night recording with id ${id} not found`);
   }
 
   delay(ms) {

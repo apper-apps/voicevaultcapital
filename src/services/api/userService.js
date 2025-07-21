@@ -63,10 +63,22 @@ class UserService {
         defaultPlaybackSpeed: 1.0,
         skipSilence: false
       },
-      recording: {
+recording: {
         autoSave: true,
         defaultMaxDuration: 5400, // 90 minutes
         audioQuality: 'high'
+      },
+      nightRecording: {
+        enabled: false,
+        maxDuration: 28800, // 8 hours
+        autoSave: true,
+        audioQuality: 'medium',
+        backgroundMode: true,
+        autoStart: false,
+        timeRange: {
+          start: '22:00',
+          end: '06:00'
+        }
       },
       transcription: {
         autoTranscribe: true,

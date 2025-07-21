@@ -1,9 +1,14 @@
-import { useState, useEffect, useRef } from "react";
-import Button from "@/components/atoms/Button";
+import React, { useEffect, useRef, useState } from "react";
 import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
 import { cn } from "@/utils/cn";
 
-const RecordingControls = ({ onRecordingComplete, maxDuration = 5400 }) => { // 90 minutes
+const RecordingControls = ({ 
+  onRecordingComplete, 
+  maxDuration = 5400, 
+  nightMode = false,
+  minimized = false 
+}) => { // 90 minutes
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -11,7 +16,6 @@ const RecordingControls = ({ onRecordingComplete, maxDuration = 5400 }) => { // 
   const intervalRef = useRef();
   const mediaRecorderRef = useRef();
   const chunksRef = useRef([]);
-
   useEffect(() => {
     return () => {
       if (intervalRef.current) {
@@ -124,85 +128,75 @@ const RecordingControls = ({ onRecordingComplete, maxDuration = 5400 }) => { // 
     return "text-success";
   };
 
-  return (
-    <div className="glass-card rounded-xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
+if (minimized) {
+    return (
+      <div className="fixed bottom-4 right-4 glass-card rounded-lg p-3 z-50">
+        <div className="flex items-center gap-2">
           <div className={cn(
-            "w-3 h-3 rounded-full",
+            "w-2 h-2 rounded-full",
             isRecording && !isPaused ? "bg-error animate-pulse-soft" : "bg-white/20"
           )} />
-          <span className={cn("text-sm font-medium", getStatusColor())}>
-            {getStatusText()}
+          <span className="text-xs font-mono text-white">
+            {formatDuration(duration)}
           </span>
-        </div>
-        <div className="text-2xl font-mono font-bold text-white">
-          {formatDuration(duration)}
+          {nightMode && <span className="text-xs">🌙</span>}
         </div>
       </div>
+    );
+  }
 
-      {/* Volume Indicator */}
-      {isRecording && !isPaused && (
-        <div className="mb-4">
-          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-success to-accent transition-all duration-100"
-              style={{ width: `${volume}%` }}
-            />
-          </div>
+  return (
+    <div
+    className={cn(
+        "glass-card rounded-xl",
+        nightMode ? "p-4 bg-slate-900/50 border-slate-700/50" : "p-6"
+    )}>
+    <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+            <div
+                className={cn(
+                    "w-3 h-3 rounded-full",
+                    isRecording && !isPaused ? "bg-error animate-pulse-soft" : "bg-white/20"
+                )} />
+            <span className={cn("text-sm font-medium", getStatusColor())}>
+                <span className={cn("text-sm font-medium", getStatusColor())}>
+                    {nightMode ? `Night Recording ${getStatusText()}` : getStatusText()}
+                </span>
+                {nightMode && <span className="text-lg">🌙</span>}
+            </span></div>
+        <div
+            className={cn("font-mono font-bold text-white", nightMode ? "text-lg" : "text-2xl")}>
+            {formatDuration(duration)}
         </div>
-      )}
-
-      <div className="flex items-center justify-center gap-4">
-        {!isRecording ? (
-          <Button
+    </div>
+    {/* Volume Indicator */}
+    {isRecording && !isPaused && <div className="mb-4">
+        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+            <div
+                className="h-full bg-gradient-to-r from-success to-accent transition-all duration-100"
+                style={{
+                    width: `${volume}%`
+                }} />
+        </div>
+    </div>}
+    <div className="flex items-center justify-center gap-4">
+        {!isRecording ? <Button
             onClick={startRecording}
             variant="success"
             size="lg"
             icon="Mic"
-            className="px-8"
-          >
-            Start Recording
-          </Button>
-        ) : (
-          <>
-            {!isPaused ? (
-              <Button
-                onClick={pauseRecording}
-                variant="secondary"
-                size="lg"
-                icon="Pause"
-              >
-                Pause
-              </Button>
-            ) : (
-              <Button
-                onClick={resumeRecording}
-                variant="success"
-                size="lg"
-                icon="Play"
-              >
-                Resume
-              </Button>
-            )}
-            <Button
-              onClick={handleStop}
-              variant="danger"
-              size="lg"
-              icon="Square"
-            >
-              Stop
-            </Button>
-          </>
-        )}
-      </div>
-
-      {duration > 0 && (
-        <div className="mt-4 text-center text-xs text-white/60">
-          Maximum duration: {Math.floor(maxDuration / 60)} minutes • Remaining: {formatDuration(maxDuration - duration)}
-        </div>
-      )}
+            className="px-8">Start Recording
+                      </Button> : <>
+            {!isPaused ? <Button onClick={pauseRecording} variant="secondary" size="lg" icon="Pause">Pause
+                              </Button> : <Button onClick={resumeRecording} variant="success" size="lg" icon="Play">Resume
+                              </Button>}
+            <Button onClick={handleStop} variant="danger" size="lg" icon="Square">Stop
+                            </Button>
+        </>}
     </div>
+    {duration > 0 && <div className="mt-4 text-center text-xs text-white/60">Maximum duration: {Math.floor(maxDuration / 60)}minutes • Remaining: {formatDuration(maxDuration - duration)}
+    </div>}
+</div>
   );
 };
 
