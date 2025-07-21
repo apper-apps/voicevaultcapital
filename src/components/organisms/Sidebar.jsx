@@ -1,8 +1,8 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import React from "react";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
@@ -138,13 +138,14 @@ const Sidebar = ({ isOpen, onClose }) => {
           >
             <ApperIcon name="X" size={20} className="text-white/70" />
           </button>
-        </div>
+</div>
 
-<nav className="space-y-2">
+        <nav className="space-y-2">
           {navigation.map((item) => (
             <NavItem key={item.name} item={item} />
           ))}
         </nav>
+        
         <div className="absolute bottom-6 left-6 right-6 space-y-4">
           {/* User Profile */}
           <div className="glass-card rounded-lg p-4">
@@ -187,7 +188,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       </div>
   );
 
-  return (
+return (
     <>
       <DesktopSidebar />
       <MobileSidebar />
