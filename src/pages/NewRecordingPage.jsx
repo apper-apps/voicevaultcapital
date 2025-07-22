@@ -12,8 +12,8 @@ import { recordingsService } from "@/services/api/recordingsService";
 
 const NewRecordingPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-const { hasKeys } = useApiKeys();
+const { user } = useAuth();
+  const { hasKeys } = useApiKeys();
   const [recording, setRecording] = useState(null);
   const [recordingError, setRecordingError] = useState(null);
   const [metadata, setMetadata] = useState({
