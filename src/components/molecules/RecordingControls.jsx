@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import ApperIcon from "@/components/ApperIcon";
-import Error from "@/components/ui/Error";
-import Button from "@/components/atoms/Button";
-import { cn } from "@/utils/cn";
+import React, { useEffect, useRef, useState } from 'react'
+import ApperIcon from '@/components/ApperIcon'
+import ErrorComponent from '@/components/ui/Error'
+import Button from '@/components/atoms/Button'
+import { cn } from '@/utils/cn'
 
 const RecordingControls = ({ 
   onRecordingComplete, 
