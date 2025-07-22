@@ -141,19 +141,47 @@ const { hasKeys } = useApiKeys();
           <div className="flex items-start gap-3">
             <ApperIcon name="AlertCircle" size={20} className="text-error flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-error mb-2">{recordingError.message}</h3>
-              {recordingError.details && (
-                <div className="text-white/70 text-sm whitespace-pre-line mb-4">
+              <h3 className="text-lg font-semibold text-error mb-2">
+                {recordingError?.message || "Recording Error"}
+              </h3>
+              {recordingError?.details && (
+                <div className="text-white/70 text-sm whitespace-pre-line mb-4 bg-white/5 p-3 rounded-lg border border-white/10">
                   {recordingError.details}
                 </div>
               )}
-              <Button
-                onClick={() => setRecordingError(null)}
-                variant="secondary"
-                size="sm"
-              >
-                Dismiss
-              </Button>
+              
+              {/* Additional help for permission errors */}
+              {recordingError?.message?.includes("Permission") && (
+                <div className="bg-accent/10 border border-accent/20 rounded-lg p-3 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <ApperIcon name="Info" size={16} className="text-accent" />
+                    <span className="text-accent font-medium text-sm">Quick Fix</span>
+                  </div>
+                  <p className="text-white/80 text-sm">
+                    Look for a microphone icon in your browser's address bar and click "Allow"
+                  </p>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => setRecordingError(null)}
+                  variant="secondary"
+                  size="sm"
+                >
+                  Dismiss
+                </Button>
+                {recordingError?.message?.includes("Permission") && (
+                  <Button
+                    onClick={() => window.location.reload()}
+                    variant="default"
+                    size="sm"
+                    icon="RefreshCw"
+                  >
+                    Reload Page
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </Card>

@@ -43,33 +43,48 @@ const RecordingControls = ({
 
 const startRecording = async () => {
     try {
-      // Check if browser supports getUserMedia
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("UNSUPPORTED_BROWSER");
+      // Check if we're in a secure context (HTTPS or localhost)
+      if (!window.isSecureContext && location.hostname !== 'localhost') {
+        throw new Error("HTTPS_REQUIRED", { 
+          cause: "Recording requires a secure connection (HTTPS) for security reasons." 
+        });
       }
 
-      // Check permission status first if available
-      if (navigator.permissions) {
-        try {
-          const permissionResult = await navigator.permissions.query({ name: 'microphone' });
-          if (permissionResult.state === 'denied') {
-            throw new Error("PERMISSION_DENIED");
-          }
-        } catch (permError) {
-          // Permission API not available in all browsers, continue with getUserMedia
-        }
+      // Check if MediaRecorder is supported
+      if (!navigator.mediaDevices || !window.MediaRecorder) {
+        throw new Error("BROWSER_NOT_SUPPORTED", { 
+          cause: "Your browser doesn't support audio recording. Please use Chrome, Firefox, or Safari." 
+        });
       }
 
+      // Check microphone permission status first
+      let permissionStatus;
+      try {
+        permissionStatus = await navigator.permissions.query({ name: 'microphone' });
+      } catch (permError) {
+        // Fallback for browsers that don't support permissions API
+        console.warn("Permissions API not available:", permError);
+      }
+
+      if (permissionStatus?.state === 'denied') {
+        throw new Error("PERMISSION_DENIED", { 
+          cause: "Microphone access has been permanently denied. Please reset permissions in your browser settings." 
+        });
+      }
+
+      // Request microphone access
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: { 
+        audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          sampleRate: 44100
-        } 
+          autoGainControl: true
+        }
       });
       
       chunksRef.current = [];
-      mediaRecorderRef.current = new MediaRecorder(stream);
+      mediaRecorderRef.current = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
       
       mediaRecorderRef.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -82,6 +97,14 @@ const startRecording = async () => {
         const url = URL.createObjectURL(blob);
         onRecordingComplete?.({ blob, url, duration });
         stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorderRef.current.onerror = (event) => {
+        console.error("MediaRecorder error:", event.error);
+        onError?.({ 
+          message: "Recording Error",
+          details: "An error occurred during recording. Please try again."
+        });
       };
       
       mediaRecorderRef.current.start();
@@ -102,41 +125,70 @@ const startRecording = async () => {
       setTimeout(() => clearInterval(volumeInterval), 1000);
       
     } catch (error) {
-      console.error("Error starting recording:", error);
+      console.error("Recording error:", error);
       
-      let errorMessage = "Failed to start recording. Please try again.";
+      let errorMessage = "Recording Error";
       let errorDetails = "";
-      
-      if (error.name === 'NotAllowedError' || error.message === 'PERMISSION_DENIED') {
-        errorMessage = "Microphone access denied";
-        errorDetails = "To enable recording:\n\n" +
-          "1. Click the microphone icon in your browser's address bar\n" +
-          "2. Select 'Always allow' for microphone access\n" +
-          "3. Refresh the page and try again\n\n" +
-          "Or check your browser settings to enable microphone permissions for this site.";
-      } else if (error.name === 'NotFoundError') {
-        errorMessage = "No microphone detected";
-        errorDetails = "Please connect a microphone and try again.";
-      } else if (error.name === 'NotReadableError') {
-        errorMessage = "Microphone is already in use";
-        errorDetails = "Please close other applications using the microphone and try again.";
-      } else if (error.name === 'AbortError') {
-        errorMessage = "Recording was interrupted";
-        errorDetails = "Please try starting the recording again.";
-      } else if (error.name === 'SecurityError') {
-        errorMessage = "Security error";
-        errorDetails = "Recording is only available on secure connections (HTTPS).";
-      } else if (error.message === 'UNSUPPORTED_BROWSER') {
-        errorMessage = "Browser not supported";
-        errorDetails = "Please use a modern browser like Chrome, Firefox, Safari, or Edge.";
+
+      // Handle specific error types
+      switch (error.name || error.message) {
+        case "NotAllowedError":
+        case "PERMISSION_DENIED":
+          errorMessage = "Microphone Permission Required";
+          errorDetails = `To start recording, please:
+1. Click the microphone icon in your browser's address bar
+2. Select "Allow" for microphone access
+3. Refresh the page and try again
+
+If you previously denied access, you may need to:
+• Click the lock/shield icon next to the address bar
+• Change microphone permission to "Allow"
+• Reload the page`;
+          break;
+          
+        case "NotFoundError":
+          errorMessage = "No Microphone Found";
+          errorDetails = `No microphone was detected:
+• Make sure your microphone is connected
+• Check if other applications are using it
+• Try refreshing the page`;
+          break;
+          
+        case "NotReadableError":
+          errorMessage = "Microphone Access Blocked";
+          errorDetails = `Your microphone is being used by another application:
+• Close other apps that might be using the microphone
+• Try disconnecting and reconnecting your microphone
+• Restart your browser`;
+          break;
+          
+        case "HTTPS_REQUIRED":
+          errorMessage = "Secure Connection Required";
+          errorDetails = error.cause || "Recording requires HTTPS for security reasons.";
+          break;
+          
+        case "BROWSER_NOT_SUPPORTED":
+          errorMessage = "Browser Not Supported";
+          errorDetails = error.cause || "Please use a modern browser that supports audio recording.";
+          break;
+          
+        case "OverconstrainedError":
+          errorMessage = "Audio Settings Not Supported";
+          errorDetails = `Your audio device doesn't support the required settings:
+• Try using a different microphone
+• Check your audio drivers are up to date`;
+          break;
+          
+        default:
+          errorMessage = "Recording Failed";
+          errorDetails = `An unexpected error occurred: ${error.message}
+Please try:
+• Refreshing the page
+• Checking your microphone connection
+• Using a different browser`;
       }
-      
-      // Call onError prop if provided, otherwise show console error
-      if (onError) {
-        onError({ message: errorMessage, details: errorDetails });
-      } else {
-        alert(errorMessage + (errorDetails ? '\n\n' + errorDetails : ''));
-      }
+
+      onError?.({ message: errorMessage, details: errorDetails });
     }
   };
 
@@ -211,12 +263,11 @@ if (minimized) {
                     "w-3 h-3 rounded-full",
                     isRecording && !isPaused ? "bg-error animate-pulse-soft" : "bg-white/20"
                 )} />
-            <span className={cn("text-sm font-medium", getStatusColor())}>
-                <span className={cn("text-sm font-medium", getStatusColor())}>
-                    {nightMode ? `Night Recording ${getStatusText()}` : getStatusText()}
-                </span>
-                {nightMode && <span className="text-lg">🌙</span>}
-            </span></div>
+<span className={cn("text-sm font-medium", getStatusColor())}>
+                {nightMode ? `Night Recording ${getStatusText()}` : getStatusText()}
+            </span>
+            {nightMode && <span className="text-lg">🌙</span>}
+        </div>
         <div
             className={cn("font-mono font-bold text-white", nightMode ? "text-lg" : "text-2xl")}>
             {formatDuration(duration)}
@@ -233,22 +284,53 @@ if (minimized) {
         </div>
     </div>}
     <div className="flex items-center justify-center gap-4">
-        {!isRecording ? <Button
+{!isRecording ? (
+          <Button
             onClick={startRecording}
             variant="success"
             size="lg"
             icon="Mic"
-            className="px-8">Start Recording
-                      </Button> : <>
-            {!isPaused ? <Button onClick={pauseRecording} variant="secondary" size="lg" icon="Pause">Pause
-                              </Button> : <Button onClick={resumeRecording} variant="success" size="lg" icon="Play">Resume
-                              </Button>}
-            <Button onClick={handleStop} variant="danger" size="lg" icon="Square">Stop
-                            </Button>
-        </>}
+            className="px-8"
+          >
+            Start Recording
+          </Button>
+        ) : (
+          <>
+            {!isPaused ? (
+              <Button 
+                onClick={pauseRecording} 
+                variant="secondary" 
+                size="lg" 
+                icon="Pause"
+              >
+                Pause
+              </Button>
+            ) : (
+              <Button 
+                onClick={resumeRecording} 
+                variant="success" 
+                size="lg" 
+                icon="Play"
+              >
+                Resume
+              </Button>
+            )}
+            <Button 
+              onClick={handleStop} 
+              variant="danger" 
+              size="lg" 
+              icon="Square"
+            >
+              Stop
+            </Button>
+          </>
+        )}
     </div>
-    {duration > 0 && <div className="mt-4 text-center text-xs text-white/60">Maximum duration: {Math.floor(maxDuration / 60)}minutes • Remaining: {formatDuration(maxDuration - duration)}
-    </div>}
+    {duration > 0 && (
+      <div className="mt-4 text-center text-xs text-white/60">
+        Maximum duration: {Math.floor(maxDuration / 60)} minutes • Remaining: {formatDuration(maxDuration - duration)}
+      </div>
+    )}
 </div>
   );
 };
